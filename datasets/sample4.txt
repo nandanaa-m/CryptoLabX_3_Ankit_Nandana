@@ -1,0 +1,2 @@
+Encryption converts plaintext into ciphertext.
+Decryption restores the original message.

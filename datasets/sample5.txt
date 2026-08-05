@@ -1,0 +1,2 @@
+Frequency analysis is one of the oldest cryptanalysis techniques.
+Python is useful for implementing cryptographic algorithms.
