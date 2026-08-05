@@ -8,10 +8,8 @@ CryptoLabX is a modular cryptography toolkit developed as part of the Cryptograp
 
 ## Team Members
 
-- Member 1
-- Member 2
-- Member 3
-- Member 4
+- Ankit Sharma (2024UCP1794)
+- Nandana Manoj (2024UCP1909)
 
 ---
 
