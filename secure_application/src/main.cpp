@@ -4,6 +4,7 @@
 #include "appointments.h"
 #include "prescriptions.h"
 #include "billing.h"
+#include "records.h"
 
 using namespace std;
 
@@ -32,13 +33,15 @@ int main()
         cout << "4. View Prescription\n";
         cout << "5. Create Bill\n";
         cout << "6. View Billing\n";
-        cout << "7. Exit\n";
+        cout << "7. Register Patient\n";
+        cout << "8. View Medical Record\n";
+        cout << "9. Exit\n";
 
         cout << "\nEnter choice: ";
 
 if (!(cin >> choice))
 {
-    cout << "Invalid input. Please enter a number from 1 to 7.\n";
+    cout << "Invalid input. Please enter a number from 1 to 9.\n";
 
     cin.clear();
     cin.ignore(10000, '\n');
@@ -73,6 +76,14 @@ if (!(cin >> choice))
                 break;
 
             case 7:
+                registerPatient();
+                break;
+
+            case 8:
+                viewMedicalRecord();
+                break;
+
+            case 9:
                 cout << "Exiting...\n";
                 break;
 

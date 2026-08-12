@@ -1,0 +1,4 @@
+Patient ID: 154
+Name: Nandana
+Age: 19
+Diagnosis: Kidney failure
