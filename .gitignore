@@ -1,0 +1,8 @@
+# Generated SQLite database
+hospital.db
+
+# Compiled C++ executable
+hospital_management
+
+# Temporary files
+*.o
