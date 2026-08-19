@@ -63,19 +63,16 @@ def main():
         # ----------------------------------
         if choice == '1':
 
-            text = get_text_input(
-                "\nEnter plaintext (or path to .txt file): "
-            )
-
+            text, src_desc = get_text_input("\nEnter plaintext (or path to .txt file): ")
             try:
-                key = int(
-                    input("Enter key (0-25): ")
-                ) % 26
-
+                key = int(input("Enter key (0-25): ")) % 26
                 ciphertext = encrypt(text, key)
-
                 print(f"\n[+] Ciphertext: {ciphertext}")
-
+                
+                # Combine the original text, key, and output into one clean log block
+                log_details = f"Input Text:\n{text}\n\nKey: {key}\n\nEncrypted Output:\n{ciphertext}"
+                log_interaction(choice, f"Source: {src_desc}", log_details)
+                
             except ValueError:
                 print("[!] Error: Key must be an integer.")
 
@@ -84,21 +81,16 @@ def main():
         # ----------------------------------
         elif choice == '2':
 
-            ciphertext = get_text_input(
-                "\nEnter ciphertext (or path to .txt file): "
-            )
-
+            ciphertext, src_desc = get_text_input("\nEnter ciphertext (or path to .txt file): ")
             try:
-                key = int(
-                    input("Enter key (0-25): ")
-                ) % 26
-
+                key = int(input("Enter key (0-25): ")) % 26
                 plaintext = decrypt(ciphertext, key)
-
-                print(
-                    f"\n[+] Decrypted Plaintext: {plaintext}"
-                )
-
+                print(f"\n[+] Decrypted Plaintext: {plaintext}")
+                
+                # Combine the original text, key, and output into one clean log block
+                log_details = f"Input Ciphertext:\n{ciphertext}\n\nKey: {key}\n\nDecrypted Output:\n{plaintext}"
+                log_interaction(choice, f"Source: {src_desc}", log_details)
+                
             except ValueError:
                 print("[!] Error: Key must be an integer.")
 
