@@ -5,6 +5,16 @@ from shift_cipher import encrypt, decrypt
 from brute_force_dictionary import brute_force_dictionary, load_dictionary
 from chi_square_attack import chi_square_attack
 
+LOG_FILE = "../outputs/execution_log.txt"
+
+def log_interaction(menu_choice, user_input_desc, output_result):
+    """Appends the user choice, input, and output cleanly to the outputs log file."""
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"--- Menu Choice: {menu_choice} ---\n")
+        f.write(f"Input: {user_input_desc}\n")
+        f.write(f"Output:\n{output_result}\n")
+        f.write("=" * 50 + "\n\n")
 
 def get_text_input(prompt_message):
     """
@@ -53,19 +63,16 @@ def main():
         # ----------------------------------
         if choice == '1':
 
-            text = get_text_input(
-                "\nEnter plaintext (or path to .txt file): "
-            )
-
+            text, src_desc = get_text_input("\nEnter plaintext (or path to .txt file): ")
             try:
-                key = int(
-                    input("Enter key (0-25): ")
-                ) % 26
-
+                key = int(input("Enter key (0-25): ")) % 26
                 ciphertext = encrypt(text, key)
-
                 print(f"\n[+] Ciphertext: {ciphertext}")
-
+                
+                # Combine the original text, key, and output into one clean log block
+                log_details = f"Input Text:\n{text}\n\nKey: {key}\n\nEncrypted Output:\n{ciphertext}"
+                log_interaction(choice, f"Source: {src_desc}", log_details)
+                
             except ValueError:
                 print("[!] Error: Key must be an integer.")
 
@@ -74,21 +81,16 @@ def main():
         # ----------------------------------
         elif choice == '2':
 
-            ciphertext = get_text_input(
-                "\nEnter ciphertext (or path to .txt file): "
-            )
-
+            ciphertext, src_desc = get_text_input("\nEnter ciphertext (or path to .txt file): ")
             try:
-                key = int(
-                    input("Enter key (0-25): ")
-                ) % 26
-
+                key = int(input("Enter key (0-25): ")) % 26
                 plaintext = decrypt(ciphertext, key)
-
-                print(
-                    f"\n[+] Decrypted Plaintext: {plaintext}"
-                )
-
+                print(f"\n[+] Decrypted Plaintext: {plaintext}")
+                
+                # Combine the original text, key, and output into one clean log block
+                log_details = f"Input Ciphertext:\n{ciphertext}\n\nKey: {key}\n\nDecrypted Output:\n{plaintext}"
+                log_interaction(choice, f"Source: {src_desc}", log_details)
+                
             except ValueError:
                 print("[!] Error: Key must be an integer.")
 
