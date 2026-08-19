@@ -5,6 +5,16 @@ from shift_cipher import encrypt, decrypt
 from brute_force_dictionary import brute_force_dictionary, load_dictionary
 from chi_square_attack import chi_square_attack
 
+LOG_FILE = "../outputs/execution_log.txt"
+
+def log_interaction(menu_choice, user_input_desc, output_result):
+    """Appends the user choice, input, and output cleanly to the outputs log file."""
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"--- Menu Choice: {menu_choice} ---\n")
+        f.write(f"Input: {user_input_desc}\n")
+        f.write(f"Output:\n{output_result}\n")
+        f.write("=" * 50 + "\n\n")
 
 def get_text_input(prompt_message):
     """
