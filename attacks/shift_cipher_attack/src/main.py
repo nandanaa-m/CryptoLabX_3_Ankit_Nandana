@@ -1,22 +1,32 @@
 import sys
-from shift_cipher import encrypt, decrypt
-from brute_force_dictionary import brute_force_dictionary
-from attacks.shift_cipher_attack.src.chi_square_attack import chi_square_attack
 import os
 
+from shift_cipher import encrypt, decrypt
+from brute_force_dictionary import brute_force_dictionary, load_dictionary
+from chi_square_attack import chi_square_attack
+
+
 def get_text_input(prompt_message):
-    """Checks if the user entered a file path. If yes, reads the file. If no, returns the raw text."""
+    """
+    Checks if the user entered a .txt file path.
+    If the file exists, reads and returns its contents.
+    Otherwise, treats the input as normal text.
+    """
     user_input = input(prompt_message).strip()
-    
-    # If the user typed a .txt file name and the file actually exists
+
     if user_input.endswith('.txt') and os.path.exists(user_input):
         with open(user_input, 'r', encoding='utf-8') as file:
             content = file.read()
-            print(f"[*] Successfully loaded {len(content)} characters from {user_input}")
-            return content
-    
-    # Otherwise, just treat it as normal typed text
+
+        print(
+            f"[*] Successfully loaded "
+            f"{len(content)} characters from {user_input}"
+        )
+
+        return content
+
     return user_input
+
 
 def display_menu():
     print("\n==========================================")
@@ -29,51 +39,162 @@ def display_menu():
     print("5. Exit")
     print("==========================================")
 
+
 def main():
+
     while True:
+
         display_menu()
+
         choice = input("Enter choice (1-5): ").strip()
 
+        # ----------------------------------
+        # 1. ENCRYPTION
+        # ----------------------------------
         if choice == '1':
-            text = get_text_input("\nEnter plaintext (or path to .txt file): ")
+
+            text = get_text_input(
+                "\nEnter plaintext (or path to .txt file): "
+            )
+
             try:
-                key = int(input("Enter key (0-25): ")) % 26
+                key = int(
+                    input("Enter key (0-25): ")
+                ) % 26
+
                 ciphertext = encrypt(text, key)
+
                 print(f"\n[+] Ciphertext: {ciphertext}")
+
             except ValueError:
                 print("[!] Error: Key must be an integer.")
 
+        # ----------------------------------
+        # 2. DECRYPTION
+        # ----------------------------------
         elif choice == '2':
-            ciphertext = get_text_input("\nEnter plaintext (or path to .txt file): ")
+
+            ciphertext = get_text_input(
+                "\nEnter ciphertext (or path to .txt file): "
+            )
+
             try:
-                key = int(input("Enter key (0-25): ")) % 26
+                key = int(
+                    input("Enter key (0-25): ")
+                ) % 26
+
                 plaintext = decrypt(ciphertext, key)
-                print(f"\n[+] Decrypted Plaintext: {plaintext}")
+
+                print(
+                    f"\n[+] Decrypted Plaintext: {plaintext}"
+                )
+
             except ValueError:
                 print("[!] Error: Key must be an integer.")
 
+        # ----------------------------------
+        # 3. BRUTE FORCE + DICTIONARY
+        # ----------------------------------
         elif choice == '3':
-            ciphertext = get_text_input("\nEnter plaintext (or path to .txt file): ")
-            print("\n[*] Running Brute-Force Dictionary Attack...")
-            results = brute_force_attack(ciphertext)
-            print("\n--- Top Results (Dictionary Matches) ---")
-            for rank, item in enumerate(results[:5], 1):
-                print(f"Rank {rank} | Key: {item['key']:2d} | Valid Words: {item['score']:2d} | Text: {item['plaintext']}")
 
+            ciphertext = get_text_input(
+                "\nEnter ciphertext (or path to .txt file): "
+            )
+
+            print(
+                "\n[*] Running Brute-Force Dictionary Attack..."
+            )
+
+            try:
+                dictionary = load_dictionary(
+                    "../dictionary/english_words.txt"
+                )
+
+                results = brute_force_dictionary(
+                    ciphertext,
+                    dictionary
+                )
+
+                print(
+                    "\n--- Top Results (Dictionary Matches) ---"
+                )
+
+                for rank, item in enumerate(
+                    results[:5], 1
+                ):
+
+                    print(
+                        f"Rank {rank} | "
+                        f"Key: {item['key']:2d} | "
+                        f"Valid Words: {item['score']:2d} | "
+                        f"Text: {item['plaintext']}"
+                    )
+
+            except FileNotFoundError:
+                print(
+                    "[!] Error: Dictionary file not found."
+                )
+
+            except Exception as e:
+                print(
+                    f"[!] Error during brute-force attack: {e}"
+                )
+
+        # ----------------------------------
+        # 4. CHI-SQUARE ATTACK
+        # ----------------------------------
         elif choice == '4':
-            ciphertext = get_text_input("\nEnter plaintext (or path to .txt file): ")
-            print("\n[*] Running Chi-Square Frequency Analysis...")
-            results = chi_square_attack(ciphertext)
-            print("\n--- Ranked Results (Lowest Chi-Square Score is Best) ---")
-            for rank, item in enumerate(results[:5], 1):
-                print(f"Rank {rank} | Key: {item['key']:2d} | Chi-Square: {item['score']:.4f} | Text: {item['plaintext']}")
 
+            ciphertext = get_text_input(
+                "\nEnter ciphertext (or path to .txt file): "
+            )
+
+            print(
+                "\n[*] Running Chi-Square Frequency Analysis..."
+            )
+
+            try:
+                results = chi_square_attack(ciphertext)
+
+                print(
+                    "\n--- Ranked Results "
+                    "(Lowest Chi-Square Score is Best) ---"
+                )
+
+                for rank, item in enumerate(
+                    results[:5], 1
+                ):
+
+                    print(
+                        f"Rank {rank} | "
+                        f"Key: {item['key']:2d} | "
+                        f"Chi-Square: {item['score']:.4f} | "
+                        f"Text: {item['plaintext']}"
+                    )
+
+            except Exception as e:
+                print(
+                    f"[!] Error during Chi-Square attack: {e}"
+                )
+
+        # ----------------------------------
+        # 5. EXIT
+        # ----------------------------------
         elif choice == '5':
+
             print("Exiting...")
             sys.exit(0)
 
+        # ----------------------------------
+        # INVALID CHOICE
+        # ----------------------------------
         else:
-            print("[!] Invalid selection. Please enter 1-5.")
+
+            print(
+                "[!] Invalid selection. "
+                "Please enter 1-5."
+            )
+
 
 if __name__ == "__main__":
     main()
