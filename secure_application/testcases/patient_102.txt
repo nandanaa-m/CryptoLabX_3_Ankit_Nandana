@@ -1,0 +1,4 @@
+Patient ID: 102
+Name: prtk
+Age: 20
+Diagnosis: nothing
