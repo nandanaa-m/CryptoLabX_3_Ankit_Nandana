@@ -1,0 +1,24 @@
+--- Menu Choice: 1 ---
+Input: Source: Direct Terminal Input
+Output:
+Input Text:
+this is a test message
+
+Key: 8
+
+Encrypted Output:
+bpqa qa i bmab umaaiom
+==================================================
+
+--- Menu Choice: 2 ---
+Input: Source: ..\testcases\../test_cases/tc_01.txt
+Output:
+Input Ciphertext:
+CRYPTOGRAPHY IS THE PRACTICE AND STUDY OF TECHNIQUES FOR SECURE COMMUNICATION
+
+Key: 3
+
+Decrypted Output:
+ZOVMQLDOXMEV FP QEB MOXZQFZB XKA PQRAV LC QBZEKFNRBP CLO PBZROB ZLJJRKFZXQFLK
+==================================================
+
