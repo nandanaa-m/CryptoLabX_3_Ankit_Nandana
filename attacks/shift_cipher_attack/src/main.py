@@ -17,25 +17,27 @@ def log_interaction(menu_choice, user_input_desc, output_result):
         f.write("=" * 50 + "\n\n")
 
 def get_text_input(prompt_message):
-    """
-    Checks if the user entered a .txt file path.
-    If the file exists, reads and returns its contents.
-    Otherwise, treats the input as normal text.
-    """
+    """Helper to read from a text file path or return direct input."""
     user_input = input(prompt_message).strip()
+    
+    # Automatically look in the sibling testcases folder
+    auto_path = os.path.join("..", "testcases", user_input)
+    
+    if user_input.endswith('.txt'):
+        if os.path.exists(auto_path):
+            with open(auto_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+                print(f"[*] Successfully loaded {len(content)} characters from {auto_path}")
+                return content, auto_path  # <--- Returns 2 things
+                
+        elif os.path.exists(user_input):
+            with open(user_input, 'r', encoding='utf-8') as file:
+                content = file.read()
+                print(f"[*] Successfully loaded {len(content)} characters from {user_input}")
+                return content, user_input  # <--- Returns 2 things
 
-    if user_input.endswith('.txt') and os.path.exists(user_input):
-        with open(user_input, 'r', encoding='utf-8') as file:
-            content = file.read()
-
-        print(
-            f"[*] Successfully loaded "
-            f"{len(content)} characters from {user_input}"
-        )
-
-        return content
-
-    return user_input
+    # Fallback if file not found: treat as raw typed text
+    return user_input, "Direct Terminal Input"  # <--- Returns 2 things
 
 
 def display_menu():
