@@ -1,6 +1,6 @@
 import sys
 from shift_cipher import encrypt, decrypt
-from brute_force_dictionary import brute_force_attack
+from brute_force_dictionary import brute_force_dictionary
 from attacks.shift_cipher_attack.src.chi_square_attack import chi_square_attack
 
 def display_menu():
