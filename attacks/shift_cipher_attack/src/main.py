@@ -2,6 +2,21 @@ import sys
 from shift_cipher import encrypt, decrypt
 from brute_force_dictionary import brute_force_dictionary
 from attacks.shift_cipher_attack.src.chi_square_attack import chi_square_attack
+import os
+
+def get_text_input(prompt_message):
+    """Checks if the user entered a file path. If yes, reads the file. If no, returns the raw text."""
+    user_input = input(prompt_message).strip()
+    
+    # If the user typed a .txt file name and the file actually exists
+    if user_input.endswith('.txt') and os.path.exists(user_input):
+        with open(user_input, 'r', encoding='utf-8') as file:
+            content = file.read()
+            print(f"[*] Successfully loaded {len(content)} characters from {user_input}")
+            return content
+    
+    # Otherwise, just treat it as normal typed text
+    return user_input
 
 def display_menu():
     print("\n==========================================")
