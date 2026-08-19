@@ -35,7 +35,7 @@ def main():
         choice = input("Enter choice (1-5): ").strip()
 
         if choice == '1':
-            text = input("\nEnter plaintext: ")
+            text = get_text_input("\nEnter plaintext (or path to .txt file): ")
             try:
                 key = int(input("Enter key (0-25): ")) % 26
                 ciphertext = encrypt(text, key)
@@ -44,7 +44,7 @@ def main():
                 print("[!] Error: Key must be an integer.")
 
         elif choice == '2':
-            ciphertext = input("\nEnter ciphertext: ")
+            ciphertext = get_text_input("\nEnter plaintext (or path to .txt file): ")
             try:
                 key = int(input("Enter key (0-25): ")) % 26
                 plaintext = decrypt(ciphertext, key)
@@ -53,7 +53,7 @@ def main():
                 print("[!] Error: Key must be an integer.")
 
         elif choice == '3':
-            ciphertext = input("\nEnter ciphertext to crack: ")
+            ciphertext = get_text_input("\nEnter plaintext (or path to .txt file): ")
             print("\n[*] Running Brute-Force Dictionary Attack...")
             results = brute_force_attack(ciphertext)
             print("\n--- Top Results (Dictionary Matches) ---")
@@ -61,7 +61,7 @@ def main():
                 print(f"Rank {rank} | Key: {item['key']:2d} | Valid Words: {item['score']:2d} | Text: {item['plaintext']}")
 
         elif choice == '4':
-            ciphertext = input("\nEnter ciphertext to crack: ")
+            ciphertext = get_text_input("\nEnter plaintext (or path to .txt file): ")
             print("\n[*] Running Chi-Square Frequency Analysis...")
             results = chi_square_attack(ciphertext)
             print("\n--- Ranked Results (Lowest Chi-Square Score is Best) ---")
