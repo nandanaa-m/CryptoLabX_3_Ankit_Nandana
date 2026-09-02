@@ -9,7 +9,8 @@
 #include <fstream>
 #include <ctime>
 #include <cstdlib>
-#include<bits/stdc++.H>
+#include<bits/stdc++.h>
+#include <fstream>
 using namespace std;
 
 string current_ciphertext = "";
@@ -21,6 +22,22 @@ void init_substitution() {
     active_substitution.clear();
     for (char c = 'A'; c <= 'Z'; c++) 
         active_substitution[c] = '_';
+}
+
+// --- LOGGING MODULE ---
+void log_action(const string& action, const string& details) {
+    // Opens the file in append mode so it doesn't overwrite your previous guesses
+    ofstream log_file("../outputs/cryptanalysis_log.txt", ios::app);
+    
+    if (log_file.is_open()) {
+        log_file << "--- " << action << " ---" << endl;
+        log_file << details << endl;
+        log_file << "====================================\n\n";
+        log_file.close();
+    } else {
+        cout << "[!] Log Warning: Could not write to ../outputs/cryptanalysis_log.txt." << endl;
+        cout << "    Make sure you created the 'outputs' folder!" << endl;
+    }
 }
 
 string read_file(const string& filepath) {
@@ -218,24 +235,36 @@ int main() {
             cout << "Enter path to textbook excerpt (e.g., ../testcases/sample.txt): ";
             cin >> path;
             string plaintext = read_file(path);
-            if(plaintext.empty()) {
+            if(plaintext.empty()) 
                 cout << "[!] Could not read file. Check the path." << endl;
-            } else {
+            else {
                 current_ciphertext = generate_random_cipher(plaintext);
                 cout << "[+] Ciphertext generated successfully! Ready for analysis." << endl;
             }
         }
-        else if (choice == 2) frequency_analysis(current_ciphertext);
-        else if (choice == 3) word_frequency_analysis(current_ciphertext);
-        else if (choice == 4) pattern_analysis(current_ciphertext);
+        else if (choice == 2) 
+            frequency_analysis(current_ciphertext);
+        else if (choice == 3) 
+            word_frequency_analysis(current_ciphertext);
+        else if (choice == 4) 
+            pattern_analysis(current_ciphertext);
         else if (choice == 5) {
             char c, p;
             cout << "Cipher letter: "; cin >> c;
             cout << "Plain letter: "; cin >> p;
             apply_substitution(c, p);
+            
+            // Format the log to match your assignment table columns
+            string details = "Substitution Tested: " + string(1, toupper(c)) + " -> " + string(1, toupper(p));
+            log_action("Hypothesis Tested", details);
         }
-        else if (choice == 6) display_partial_plaintext(current_ciphertext);
-        
+
+        else if (choice == 6) {
+            display_partial_plaintext(current_ciphertext);
+            
+            // Log the current state of the text so you can paste it into your "Result" column
+            log_action("Text State Result", current_partial_plaintext);
+        }
     } while (choice != 7);
 
 return 0;
