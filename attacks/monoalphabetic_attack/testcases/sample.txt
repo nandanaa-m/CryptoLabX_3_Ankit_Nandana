@@ -1,0 +1,35 @@
+Proof. Assume that E is semantically secure. Our goal is to show that E is secure against message recovery.
+
+To prove that E is secure against message recovery, we have to show that every efficient adversary A has negligible advantage in Attack Game 2.2. To show this, we let an arbitrary but efficient adversary A be given, and our goal now is to show that A's message recovery advantage, MRadv[A, E], is negligible. Let p denote the probability that A wins the message recovery game, so that
+
+MRadv[A, E] = |p - 1/|M||.
+
+We shall show how to construct an efficient adversary B whose semantic security advantage in Attack Game 2.1 is related to A's message recovery advantage as follows:
+
+MRadv[A, E] <= SSadv[B, E]. (2.5)
+
+Since B is efficient, and since we are assume E is semantically secure, the right-hand side of (2.5) is negligible, and so we conclude that MRadv[A, E] is negligible.
+
+So all that remains to complete the proof is to show how to construct an efficient B that satisfies (2.5). The idea is to use A as a "black box" — we do not have to understand the inner workings of A at all.
+
+Here is how B works. Adversary B generates two random messages, m0 and m1, and sends these to its own SS challenger. This challenger sends B a ciphertext c, which B forwards to A, as if it were coming from A's MR challenger. When A outputs a message m, our adversary B compares m0 to m, and outputs b = 1 if m0 = m, and b = 1 otherwise.
+
+That completes the description of B. Note that the running time of B is essentially the same as that of A. We now analyze the B's SS advantage, and relate this to A's MR advantage.
+
+For b = 0, 1, let pb be the probability that B outputs 1 if B's SS challenger encrypts mb. So by definition
+
+SSadv[B, E] = |p1 - p0|.
+
+On the one hand, when c is an encryption of m0, the probability p0 is precisely equal to A's probability of winning the message recovery game, so p0 = p. On the other hand, when c is an encryption of m1, the adversary A's output is independent of m0, and so p1 = 1/|M|. It follows that
+
+SSadv[B, E] = |p1 - p0| = |1/|M| - p| = MRadv[A, E].
+
+This proves (2.5). In fact, equality holds in (2.5), but that is not essential to the proof.
+
+The reader should make sure that he or she understands the logic of this proof, as this type of proof will be used over and over again throughout the book. We shall review the important parts of the proof here, and give another way of thinking about it.
+
+The core of the proof was establishing the following fact: for every efficient MR adversary A that attacks E as in Attack Game 2.2, there exists an efficient SS adversary B that attacks E as in Attack Game 2.1 such that
+
+MRadv[A, E] <= SSadv[B, E]. (2.6)
+
+We are trying to prove that if E is semantically secure, then E is secure against message recovery. In the above proof, we argued that if E is semantically secure, then the right-hand side of (2.6) must be negligible, and hence so must the left-hand side; since this holds for all efficient A, we conclude that E is secure against message recovery.
