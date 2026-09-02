@@ -173,6 +173,30 @@ void display_partial_plaintext(const string& ciphertext) {
     cout << "\n--- Current Text State ---\n" << current_partial_plaintext << "\n--------------------------\n";
 }
 
+// 6. VERIFY SOLUTION
+void verify_solution() {
+    cout << "\n--- 6. Solution Verification ---" << endl;
+    int mapped_count = 0;
+    
+    cout << "Current Key Mapping:" << endl;
+    for (char c = 'A'; c <= 'Z'; c++) {
+        if (active_substitution[c] != '_') {
+            cout << c << " -> " << active_substitution[c] << "   ";
+            mapped_count++;
+            if (mapped_count % 6 == 0) cout << endl; // Just for neat formatting
+        }
+    }
+    
+    cout << "\n\nTotal letters mapped: " << mapped_count << " / 26" << endl;
+    
+    if (mapped_count == 26) {
+        cout << "[+] Full substitution key unlocked successfully! Decryption complete." << endl;
+    } else {
+        cout << "[!] Key is incomplete. " << (26 - mapped_count) << " letters remaining." << endl;
+    }
+    cout << "--------------------------------\n";
+}
+
 int main() {
     init_substitution();
     int choice;
