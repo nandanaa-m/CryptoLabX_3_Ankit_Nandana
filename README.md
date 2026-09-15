@@ -46,3 +46,4 @@ Technologies & Tools Used
 C++: High-performance cryptanalysis algorithms (Monoalphabetic, Kasiski).
 Python 3: Main application and utility scripts.
 Git & GitHub: Version control, collaboration, and repository management.
+VS Code: Primary IDE for development and debugging.
