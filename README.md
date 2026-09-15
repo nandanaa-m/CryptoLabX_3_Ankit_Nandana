@@ -33,7 +33,9 @@ CryptoLabX/
 ├── requirements.txt     # Python dependencies
 └── .gitignore           # Ignored files
 
-Current Features
+```
+
+## Current Features
 Project Infrastructure: Modular folder structure, command-line interface, and execution logging.
 Classical Attacks:
 Monoalphabetic Substitution Cryptanalysis (Frequency & Pattern Analysis)
@@ -42,7 +44,7 @@ Shift Cipher Attacks
 Analysis Tools: File processing, text sanitization, and automated execution logging.
 Datasets: Integrated sample text files for testing algorithms.
 
-Technologies & Tools Used
+## Technologies & Tools Used
 C++: High-performance cryptanalysis algorithms (Monoalphabetic, Kasiski).
 Python 3: Main application and utility scripts.
 Git & GitHub: Version control, collaboration, and repository management.
