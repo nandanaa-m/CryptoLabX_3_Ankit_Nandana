@@ -1,4 +1,3 @@
-# Padding Oracle Attack - Main Program
 """
 main.py
 Driver script to demonstrate the Padding Oracle Attack on AES-CBC.
@@ -10,7 +9,8 @@ from attack import recover_plaintext
 
 
 def display_analysis_and_recommendations(num_blocks, total_queries):
-    """Prints the analytical evaluation and security recommendations required by Tasks 1, 3, and 4."""
+    """Display attack analysis and security recommendations."""
+
     avg_per_block = total_queries / num_blocks if num_blocks else 0
     avg_per_byte = total_queries / (num_blocks * 16) if num_blocks else 0
 
@@ -19,74 +19,122 @@ def display_analysis_and_recommendations(num_blocks, total_queries):
     print("=" * 65)
 
     print("\n--- Task 1: Understand the Attack ---")
-    print("1. AES-CBC Chaining: Decryption computes P_i = D_K(C_i) ^ C_{i-1}.")
-    print("   The plaintext is revealed only after XORing the block cipher's")
-    print("   raw decryption with the preceding ciphertext block (or IV for block 1).")
-    print("2. PKCS#7 Padding: Messages are padded to a multiple of 16 bytes.")
-    print("   If N bytes (1 <= N <= 16) are needed, N bytes of value 0xN are appended.")
-    print("3. Role of the Oracle: Leaking whether decrypted data possesses valid PKCS#7")
-    print("   padding creates a side-channel that lets an attacker deduce intermediate")
-    print("   decryption states (D_K(C_i)) one byte at a time.")
+
+    print("1. AES-CBC Chaining:")
+    print("   P_i = D_K(C_i) XOR C_(i-1)")
+    print("   The IV is used as the previous block for the first block.")
+
+    print("\n2. PKCS#7 Padding:")
+    print("   Messages are padded to a multiple of 16 bytes.")
+    print("   If N bytes are required, N bytes with value N are appended.")
+
+    print("\n3. Role of the Padding Oracle:")
+    print("   The oracle reports whether decrypted data has valid padding.")
+    print("   By modifying the previous ciphertext block and observing")
+    print("   oracle responses, an attacker can recover plaintext bytes")
+    print("   without knowing the AES encryption key.")
 
     print("\n--- Task 3: Analyze the Attack ---")
-    print(f"1. Query Statistics:")
-    print(f"   - Total oracle queries executed : {total_queries}")
-    print(f"   - Average queries per block     : {avg_per_block:.2f} (Theoretical max: 4096)")
-    print(f"   - Average queries per byte      : {avg_per_byte:.2f} (Theoretical expected: ~128)")
-    print("2. Mechanism of Modification:")
-    print("   Because P_i[j] = D_K(C_i)[j] ^ C_{i-1}[j], modifying byte j of C_{i-1}")
-    print("   directly alters byte j of P_i bit-for-bit during CBC decryption.")
-    print("   This modification does NOT distort subsequent ciphertext blocks (C_{i+1}, etc.),")
-    print("   enabling targeted, isolated byte manipulation.")
+
+    print("\n1. Query Statistics:")
+    print(f"   Total oracle queries executed : {total_queries}")
+    print(f"   Average queries per block     : {avg_per_block:.2f}")
+    print(f"   Average queries per byte      : {avg_per_byte:.2f}")
+    print("   Basic candidate-search bound  : 4096 queries per block")
+    print("   Note: Additional validation queries may be required.")
+
+    print("\n2. Why Modify the Previous Ciphertext Block?")
+    print("   CBC decryption follows:")
+    print("   P_i = D_K(C_i) XOR C_(i-1)")
+    print("   Changing a byte in C_(i-1) changes the corresponding")
+    print("   byte in P_i. The oracle's response helps identify")
+    print("   candidate plaintext bytes.")
 
     print("\n--- Task 4: Security Recommendations ---")
-    print("1. Authenticated Encryption with Associated Data (AEAD):")
-    print("   Transition from CBC mode to modern AEAD modes like AES-GCM or")
-    print("   ChaCha20-Poly1305 to ensure simultaneous confidentiality and integrity.")
-    print("2. Encrypt-then-MAC:")
-    print("   If CBC is mandatory, calculate a cryptographic MAC (e.g., HMAC-SHA256)")
-    print("   over (IV || Ciphertext) and verify the MAC before initiating decryption.")
-    print("3. Constant-Time Uniform Error Handling:")
-    print("   Never differentiate between padding errors and decryption/integrity errors.")
-    print("=" * 65 + "\n")
+
+    print("1. Prefer authenticated encryption such as AES-GCM.")
+    print("2. If CBC is required, authenticate the IV and ciphertext")
+    print("   with a secure MAC and verify it before decryption.")
+    print("3. Avoid distinguishable padding and decryption errors.")
+    print("4. Do not process decrypted data before authentication.")
+
+    print("=" * 65)
 
 
 def main():
-    # Target message for the demonstration
+
+    # Target message used for the local demonstration.
     secret_message = (
-        "Confidential Data: AES-CBC padding oracle demonstration successfully executed!"
+        "Confidential Data: AES-CBC padding oracle "
+        "demonstration successfully executed!"
     )
 
-    print("=================================================================")
-    print("           AES-CBC PADDING ORACLE ATTACK DEMONSTRATION           ")
-    print("=================================================================")
+    print("=" * 65)
+    print("       AES-CBC PADDING ORACLE ATTACK DEMONSTRATION")
+    print("=" * 65)
 
-    # 1. Server-side setup: Encrypt message and generate padding oracle
-    # Note: 'key' remains on the simulated server side and is NEVER passed to the attack
+    # Display the original plaintext.
+    print("\n[+] Original Plaintext:")
+    print(secret_message)
+
+    # Server-side setup: encrypt the message and create the oracle.
+    # The key is not passed to the attack algorithm.
     key, iv, ciphertext = encrypt_message(secret_message)
+
     oracle = make_padding_oracle(key)
 
     num_blocks = len(ciphertext) // 16
 
     print("\n[+] Challenge Generated:")
-    print(f"    IV (hex)          : {iv.hex()}")
+    print(f"    IV (hex)           : {iv.hex()}")
     print(f"    Ciphertext (hex)   : {ciphertext.hex()}")
-    print(f"    Ciphertext Length : {len(ciphertext)} bytes ({num_blocks} AES blocks)")
+    print(f"    Ciphertext Length  : {len(ciphertext)} bytes")
+    print(f"    Number of Blocks   : {num_blocks}")
 
-    # 2. Attacker-side execution: Recover plaintext using ONLY iv, ciphertext, and oracle
-    print("\n[+] Launching Padding Oracle Attack (Zero knowledge of secret key)...")
-    recovered_plaintext_bytes, total_queries = recover_plaintext(iv, ciphertext, oracle)
+    # Attacker-side execution: only IV, ciphertext and oracle are passed.
+    print("\n[+] Launching Padding Oracle Attack...")
+    print("[+] The attack function does not receive the AES key.")
 
-    # 3. Deliverables output
+    recovered_plaintext_bytes, total_queries = recover_plaintext(
+        iv,
+        ciphertext,
+        oracle
+    )
+
+    # Display recovered plaintext.
     print("\n" + "=" * 65)
     print("DELIVERABLES")
     print("=" * 65)
-    print(f"[+] Recovered Plaintext (Raw Bytes) : {recovered_plaintext_bytes}")
-    print(f"[+] Recovered Plaintext (Decoded)   : {recovered_plaintext_bytes.decode('utf-8', errors='replace')}")
-    print(f"[+] Total Oracle Queries Executed   : {total_queries}")
 
-    # 4. Display theoretical and security analysis
-    display_analysis_and_recommendations(num_blocks, total_queries)
+    print("\n[+] Original Plaintext:")
+    print(secret_message)
+
+    print("\n[+] Recovered Plaintext (Raw Bytes):")
+    print(recovered_plaintext_bytes)
+
+    print("\n[+] Recovered Plaintext (Decoded):")
+    recovered_text = recovered_plaintext_bytes.decode(
+        "utf-8",
+        errors="replace"
+    )
+    print(recovered_text)
+
+    print("\n[+] Total Oracle Queries Executed:")
+    print(total_queries)
+
+    # Verify recovered plaintext against the original demonstration input.
+    if recovered_plaintext_bytes == secret_message.encode("utf-8"):
+        print("\n[+] Verification: SUCCESS")
+        print("[+] Original and recovered plaintext match.")
+    else:
+        print("\n[-] Verification: FAILED")
+        print("[-] Original and recovered plaintext do not match.")
+
+    # Display attack analysis and security recommendations.
+    display_analysis_and_recommendations(
+        num_blocks,
+        total_queries
+    )
 
 
 if __name__ == "__main__":
